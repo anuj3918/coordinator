@@ -9,22 +9,41 @@
 	<a href="/">Home</a>
 	<a href="/sendLocation">Send Location</a>
 	<a href="/receiveLocation">Receive Location</a>
-	
 
 <br/><br/>
 
-<input type="text" id="shareWith"><br/>
-<p>Click the button to get your coordinates.</p>
+<label>Enter you name</label>
+<input type="text" id="myName"><br/><br/><br/>
+<button onclick="setMyname()">Set My Name</button>
+
+<label>Enter the name of recipient</label>
+<input type="text" id="shareWith"><br/><br/><br/>
+<button onclick="setRecipientname()">Set receiver's name</button>
 
 <button onclick="getLocation()">Start sending Location</button>
 <button onclick="stopSendingLocation()">Stop sending Location</button>
 
+
+<br/><br/><br/>
+<label>Location retrieved as : </label>
 <p id="demo"></p>
 
 <script>
 var socket = io();
-socket.emit('addClient', "sender");
+
 var interval = null;
+var myName = null;
+var recipient = null;
+
+function setMyname(){
+	myName = $('#myName').val();
+	socket.emit('addClient', myName);
+}
+
+function setRecipientname(){
+	recipient = $('#shareWith').val();
+	socket.emit('addClient', myName);
+}
 
 function sendLocation(){
 	interval = setInterval(getLocation, 30*1000);
@@ -44,13 +63,12 @@ function showPosition(position) {
 	console.log("Location Received");
     document.getElementById("demo").innerHTML = "Latitude: " + position.coords.latitude + 
     "<br>Longitude: " + position.coords.longitude;
-    var to = $('#shareWith').val();
     var details = {
     	location: {
     		lat: position.coords.latitude,
     		lng: position.coords.longitude
     	},
-    	to: to
+    	to: recipient
     }
     console.log("Sending location to "+to);
     socket.emit('senderLocation', details);

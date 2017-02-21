@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <head><title>Hello world</title>
-  <style>
-      #map {
-        width: 100%;
-        height: 400px;
-        background-color: grey;
-      }
-    </style>
+<head><title>Hello world</title>
+	<style>
+	#map {
+		width: 100%;
+		height: 400px;
+		background-color: grey;
+	}
+	</style>
 </head>
-  <script src="javascripts/jquery.min.js"></script>
-  <script src="javascripts/socket.io.js"></script>
-  
-  <body>
-  	<h1>Receiving Location</h1>
-  	<a href="/">Home</a>
-  	<a href="/sendLocation">Send Location</a>
-  	<a href="/receiveLocation">Receive Location</a> <br/>
-  	
-		  	<label>Latitiude : </label><label id="latitude"></label>
-		  	<br/>
-		  	<br/>
-		  	<label>Longitude : </label><label id="longitude"></label>
+<script src="javascripts/jquery.min.js"></script>
+<script src="javascripts/socket.io.js"></script>
 
+<body>
+	<h1>Receiving Location</h1>
+	<a href="/">Home</a>
+	<a href="/sendLocation">Send Location</a>
+	<a href="/receiveLocation">Receive Location</a> <br/>
 
-<h3>My Google Maps Demo</h3>
-    <div id="map"></div>
-    
-    
+	<br/><br/>
+
+	<label>Enter you name</label>
+	<input type="text" id="myName"><br/>
+	<button onclick="setMyname()">Set My Name</button>
+	<br/><br/>
+
+	<label>Latitude : </label><label id="latitude"></label>
+	<br/>
+	<br/>
+	<label>Longitude : </label><label id="longitude"></label>
+	<br/><br/>
+
+	<h3>My Google Maps Demo</h3>
+	<div id="map"></div>
+	
+	
 
 
 </body>
@@ -35,17 +42,18 @@
 <script type="text/javascript">
 var latitude = 19.0760
 var longitude = 72.8777
+var myName = null;
 var uluru, map, marker, myLatlng;
-	function initMap() {
-        uluru = {lat: latitude, lng: longitude};
-        map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 13,
-          center: uluru
-        });
-        marker = new google.maps.Marker({
-			position: uluru,
-			icon: {
-				path: google.maps.SymbolPath.CIRCLE,
+function initMap() {
+	uluru = {lat: latitude, lng: longitude};
+	map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 13,
+		center: uluru
+	});
+	marker = new google.maps.Marker({
+		position: uluru,
+		icon: {
+			path: google.maps.SymbolPath.CIRCLE,
 				//size: new google.maps.Size(20, 32),
 				scale: 6,
 				fillColor: '#4785EF',
@@ -54,27 +62,33 @@ var uluru, map, marker, myLatlng;
 				strokeColor: 'white'
 			},
 			map: map
-        });
-    }
-	var socket = io();
-	socket.emit('addClient', "receiver");
-		socket.on('locationToReciever', function(locationReceived){
-			console.log("Received location");
-			console.log(locationReceived);
-			$('#latitude').html(locationReceived.lat);
-			$('#longitude').html(locationReceived.lng);
-			
-				latitude = parseFloat(locationReceived.lat);
-				longitude = parseFloat(locationReceived.lng);
-
-			myLatlng = new google.maps.LatLng(latitude,longitude);
-			map.setCenter(myLatlng);
-			marker.setPosition(myLatlng);
 		});
+}
+
+var socket = io();
+
+function setMyname(){
+	myName = $('#myName').val();
+	socket.emit('addClient', myName);
+}
+
+socket.on('locationToReciever', function(locationReceived){
+	console.log("Received location");
+	console.log(locationReceived);
+	$('#latitude').html(locationReceived.lat);
+	$('#longitude').html(locationReceived.lng);
+	
+	latitude = parseFloat(locationReceived.lat);
+	longitude = parseFloat(locationReceived.lng);
+
+	myLatlng = new google.maps.LatLng(latitude,longitude);
+	map.setCenter(myLatlng);
+	marker.setPosition(myLatlng);
+});
 </script>
 
 <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBV4jkQuOWU25khud0fFM3vDk43QfCD-_c&callback=initMap">
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBV4jkQuOWU25khud0fFM3vDk43QfCD-_c&callback=initMap">
 </script>
 
 </html>
