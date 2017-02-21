@@ -1,39 +1,67 @@
 <!DOCTYPE html>
 <html>
-  <head><title>Hello world</title></head>
-  <script src="javascripts/jquery.min.js"></script>
-  <script src="javascripts/socket.io.js"></script>
-  
-  <body>
-  	<h1>Send Location</h1>
-  	<a href="/">Home</a>
-  	<a href="/sendLocation">Send Location</a>
-  	<a href="/receiveLocation">Receive Location</a>
-  	<div class="app">
-		  	<div class="loading"></div>
-		  	<div id="infobox" class="infobox"></div>
-		  	<div id="map"><button type="submit">Send my location</button></div>
-		  </div>
-  </body>
-  <script type="text/javascript">
-		
-  		// socket.on('connect', function(){
-  		// 	console.log("Connected with socket io");
-  		// });
-			var socket = io();
-			socket.emit('addClient', "sender");
-			$("button").on('click', function(){
-				console.log("Clicked");
-				$.ajax({
-					type: "POST",
-					url: "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBV4jkQuOWU25khud0fFM3vDk43QfCD-_c",
-					success: function(location_data){
-						console.log(location_data);
-							location_data["to"] = "receiver"; 
-							socket.emit('senderLocation', location_data);
-						
-					}
-				});
-			})
-		</script>
+<head><title>Hello world</title></head>
+<script src="javascripts/jquery.min.js"></script>
+<script src="javascripts/socket.io.js"></script>
+
+<body>
+	<h1>Send Location</h1>
+	<a href="/">Home</a>
+	<a href="/sendLocation">Send Location</a>
+	<a href="/receiveLocation">Receive Location</a>
+	
+
+<br/><br/>
+
+<input type="text" id="shareWith"><br/>
+<p>Click the button to get your coordinates.</p>
+
+<button onclick="getLocation()">Start sending Location</button>
+<button onclick="stopSendingLocation()">Stop sending Location</button>
+
+<p id="demo"></p>
+
+<script>
+var socket = io();
+socket.emit('addClient', "sender");
+var interval = null;
+
+function sendLocation(){
+	interval = setInterval(getLocation, 30*1000);
+}
+
+function getLocation() {
+	console.log("Getting location");
+	var x = document.getElementById("demo");
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+	console.log("Location Received");
+    document.getElementById("demo").innerHTML = "Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude;
+    var to = $('#shareWith').val();
+    var details = {
+    	location: {
+    		lat: position.coords.latitude,
+    		lng: position.coords.longitude
+    	},
+    	to: to
+    }
+    console.log("Sending location to "+to);
+    socket.emit('senderLocation', details);
+}
+
+function stopSendingLocation(){
+	console.log("Ending interval")
+	clearInterval(interval);
+}
+</script>
+
+
+</body>
 </html>
