@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head><title>Hello world</title></head>
+  <script src="javascripts/jquery.min.js"></script>
+  <script src="javascripts/socket.io.js"></script>
+  
+  <body>
+  	<h1>Send Location</h1>
+  	<a href="/">Home</a>
+  	<a href="/sendLocation">Send Location</a>
+  	<a href="/receiveLocation">Receive Location</a>
+  	<div class="app">
+		  	<div class="loading"></div>
+		  	<div id="infobox" class="infobox"></div>
+		  	<div id="map"><button type="submit">Send my location</button></div>
+		  </div>
+  </body>
+  <script type="text/javascript">
+		
+  		// socket.on('connect', function(){
+  		// 	console.log("Connected with socket io");
+  		// });
+			var socket = io();
+			socket.emit('addClient', "sender");
+			$("button").on('click', function(){
+				console.log("Clicked");
+				$.ajax({
+					type: "POST",
+					url: "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBV4jkQuOWU25khud0fFM3vDk43QfCD-_c",
+					success: function(location_data){
+						console.log(location_data);
+							location_data["to"] = "receiver"; 
+							socket.emit('senderLocation', location_data);
+						
+					}
+				});
+			})
+		</script>
+</html>
