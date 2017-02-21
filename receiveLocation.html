@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head><title>Hello world</title></head>
+  <script src="javascripts/jquery.min.js"></script>
+  <script src="javascripts/socket.io.js"></script>
+  
+  <body>
+  	<h1>Receiving Location</h1>
+  	<a href="/">Home</a>
+  	<a href="/sendLocation">Send Location</a>
+  	<a href="/receiveLocation">Receive Location</a> <br/>
+  	
+		  	<label>Latitiude : </label><label id="latitude"></label>
+		  	<br/>
+		  	<br/>
+		  	<label>Longitude : </label><label id="longitude"></label>
+		  	
+  </body>
+  <script type="text/javascript">
+		
+  		// socket.on('connect', function(){
+  		// 	console.log("Connected with socket io");
+  		// });
+			var socket = io();
+			socket.emit('addClient', "receiver");
+	
+						socket.on('locationToReciever', function(locationReceived){
+								console.log("Received location");
+								console.log(locationReceived);
+								$('#latitude').html(locationReceived.lat);
+								$('#longitude').html(locationReceived.lng);
+							});
+		</script>
+</html>
