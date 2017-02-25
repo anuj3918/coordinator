@@ -1,8 +1,68 @@
+@media screen and (max-width: 600px) {
+    .spacing{
+        height:130px;
+    }
+    /*
+    .spacing2{
+        height:20px;
+        background-color: red;
+    }
+    .spacing3{
+        height:100px;
+        background-color: red;
+    }
+    #thought{
+    	text-align: -webkit-center;
+    }
+    .footers{
+    	display: none;
+    }
+    .main_logo{
+    	text-align: -webkit-center;
+    }
+    .logo_text{
+    	text-align: -webkit-center;
+    }
+    #know_more{
+    	width: 60%;
+    }
+    .feautres_web{
+    	display: none;
+    }
+    */
+    
+}
+
+@font-face {
+    font-family: 'lineto'; /*a name to be used later*/
+    src: url("../lineto/lineto.ttf"); /*URL to font*/
+    src: url("../lineto/lineto.woff");
+}
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: 'lineto'
 }
 
 a {
-  color: #00B7FF;
+  color: #fff;
 }
+
+
+#home_list{
+	padding: 0;
+}
+
+#home_list li{
+	margin-top: 50px;
+	margin-bottom: 100px;
+}
+
+#home_list li button{
+	padding: 30px;
+	border-radius: 25px;
+	border: none;
+}
+
+    

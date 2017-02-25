@@ -1,11 +1,34 @@
 <!DOCTYPE html>
 <html>
-  <head><title>Hello world</title></head>
+  <head>
+  	<title>Coordinator</title>
+  	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+  	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+  </head>
   
   <body>
-  	<h1>Homepage</h1>
-  	<a href="/">Home</a>
-  	<a href="/sendLocation">Send Location</a>
-  	<a href="/receiveLocation">Receive Location</a>
+
+  	<div class="container">
+  		<div class="col-sm-12" style="height:0px;" class="spacing">&nbsp;</div>
+  		<div class="col-sm-12">
+  			<h1 style="text-align: -webkit-center; font-size: 80px;margin: 20px auto 100px auto;">COORDINATOR</h1>
+  		</div>
+  		
+  		<div class="col-sm-12">
+  			<ul style="list-style: none;font-size: 50px;" id="home_list">
+				<li class="col-sm-12" style="text-align: -webkit-center;">
+					<div class="col-sm-1">&nbsp;</div>
+					<button class="btn-primary col-sm-10"><a href="/sendLocation">Send Location</a></button>
+					<div class="col-sm-1">&nbsp;</div>
+				</li>
+				<li class="col-sm-12" style="text-align: -webkit-center;">
+					<div class="col-sm-1">&nbsp;</div>
+					<button class="btn-success col-sm-10"><a href="/receiveLocation">Receive Location</a></button>
+					<div class="col-sm-1">&nbsp;</div>
+				</li>
+			</ul>
+  		</div>	
+	</div>
+  	 	
   </body>
 </html>

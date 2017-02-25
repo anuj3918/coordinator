@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head><title>Hello world</title></head>
+<head><title>Send Location</title></head>
 <script src="javascripts/jquery.min.js"></script>
 <script src="javascripts/socket.io.js"></script>
 
@@ -20,7 +20,7 @@
 <input type="text" id="shareWith"><br/><br/><br/>
 <button onclick="setRecipientname()">Set receiver's name</button>
 
-<button onclick="getLocation()">Start sending Location</button>
+<button onclick="sendLocation()">Start sending Location</button>
 <button onclick="stopSendingLocation()">Stop sending Location</button>
 
 
@@ -46,6 +46,7 @@ function setRecipientname(){
 }
 
 function sendLocation(){
+	console.log('setting interval')
 	interval = setInterval(getLocation, 30*1000);
 }
 
@@ -70,7 +71,7 @@ function showPosition(position) {
     	},
     	to: recipient
     }
-    console.log("Sending location to "+to);
+    console.log("Sending location to "+recipient);
     socket.emit('senderLocation', details);
 }
 
