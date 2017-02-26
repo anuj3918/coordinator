@@ -1,43 +1,92 @@
 <!DOCTYPE html>
 <html>
-<head><title>Receive Location</title>
-	<style>
+  <head>
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<title>Coordinator-Send</title>
+  	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+  	<link rel="stylesheet" type="text/css" href="stylesheets/receiveLocation.css">
+  	<style>
 	#map {
 		width: 100%;
-		height: 400px;
+		height: 300px;
 		background-color: grey;
 	}
 	</style>
-</head>
-<script src="javascripts/jquery.min.js"></script>
-<script src="javascripts/socket.io.js"></script>
 
-<body>
-	<h1>Receiving Location</h1>
-	<a href="/">Home</a>
-	<a href="/sendLocation">Send Location</a>
-	<a href="/receiveLocation">Receive Location</a> <br/>
+  	<script src="javascripts/jquery.min.js"></script>
+  	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+	<script src="javascripts/socket.io.js"></script>
+  </head>
+  
+  <body>
 
-	<br/><br/>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">COORDINATE</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/sendLocation">Send Location</a></li>
+        <li class="active"><a href="/receiveLocation">Receive Location</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
-	<label>Enter you name</label>
-	<input type="text" id="myName"><br/>
-	<button onclick="setMyname()">Set My Name</button>
-	<br/><br/>
+<div class="col-sm-12" class="spacing1">&nbsp;</div>
 
-	<label>Latitude : </label><label id="latitude"></label>
-	<br/>
-	<br/>
-	<label>Longitude : </label><label id="longitude"></label>
-	<br/><br/>
+<div class="col-sm-12 setDetails" style="text-align: -webkit-center;">
+	<div class="col-sm-6" style="margin-bottom: 30px;">
+		<label>Your name</label>
+		<input type="text" id="myName" placeholder="myname" style="text-align:center;border: 1px solid #908484;border-radius:20px;">
+	</div>
+	<div class="col-sm-6">
+			<button class="btn-success" onclick="setMyname()" style="padding: 10px 50px;border-radius: 15px;border: none;">Set Details</button>	
+	</div>
+</div>
 
-	<h3>My Google Maps Demo</h3>
-	<div id="map"></div>
+<div class="col-sm-12 changeDetails" style="text-align: -webkit-center; display:none">
+	<div class="col-sm-6" style="text-align: right;">
+		<label style="float:left">My name : </label><p id="yourName"></p>
+	</div>
+	<div class="col-sm-6">
+		<button class="btn-success infoChange" style="padding: 10px 50px;border-radius: 15px;border: none;">Edit Details</button>	
+	</div>
+</div>	
+
+<div id="displayLocation" class="col-sm-12" style="text-align: -webkit-center; display:none">
+	<h3>Location retreived from : </h3> <p id="sender"></p>
+	<div class="col-sm-6" style="text-align: right;">
+		<label style="float:left">Latitude  : </label><p id="latitude"></p>
+	</div>
+	<div class="col-sm-6" style="text-align: right;">
+		<label style="float:left">Longitude : </label><p id="longitude"></p>
+	</div>
+</div>
 
 
+<h3>MAP</h3>
+<div id="map"></div>
 
+<div class="col-sm-12" class="spacing3" style="height:20px;">&nbsp;</div>
+<div class="col-sm-12" id="startDiv" style="display: none;text-align: -webkit-center;">
+	<button class="btn-primary locationButtons" onclick="startReceivingLocation()">Start receiving Location</button>
+</div>
 
-</body>
+<!-- <div class="col-sm-12" id="stopDiv" style="display: none;text-align: -webkit-center;">
+	<button class="btn-danger locationButtons" onclick="#stopReceivingLocation()">Stop receiving Location</button>
+</div> -->
 
 <script type="text/javascript">
 var latitude = 19.0760
@@ -69,14 +118,34 @@ var socket = io();
 
 function setMyname(){
 	myName = $('#myName').val();
+	$('#yourName').html(myName);
+	$('.setDetails').css("display", "none");	
+	$('#startDiv').css("display", "inherit");
+	$('.changeDetails').css("display", "inherit");
+}
+
+function startReceivingLocation(){
 	socket.emit('addClient', myName);
 }
 
-socket.on('locationToReciever', function(locationReceived){
+// function stopReceivingLocation(){
+// 	socket.emit('removeClient', myName);
+// }
+
+
+$('.infoChange').on('click', function(){
+	$('.setDetails').css("display", "inherit");
+	$('.changeDetails').css("display", "none");
+	$('#startDiv').css("display", "none");
+})
+
+socket.on('locationToReciever', function(details){
 	console.log("Received location");
-	console.log(locationReceived);
+	console.log(details);
+	var locationReceived = details.location; 
 	$('#latitude').html(locationReceived.lat);
 	$('#longitude').html(locationReceived.lng);
+	$('#sender').html(details.from);
 
 	latitude = parseFloat(locationReceived.lat);
 	longitude = parseFloat(locationReceived.lng);
@@ -91,15 +160,7 @@ socket.on('locationToReciever', function(locationReceived){
 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBV4jkQuOWU25khud0fFM3vDk43QfCD-_c&callback=initMap">
 </script>
 
+
+
+</body>
 </html>
-
-
-
-
-
-
-
-
-
-
-

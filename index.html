@@ -1,34 +1,40 @@
 <!DOCTYPE html>
 <html>
   <head>
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   	<title>Coordinator</title>
   	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
   	<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+  	<script src="javascripts/jquery.min.js"></script>
   </head>
   
   <body>
 
   	<div class="container">
   		<div class="col-sm-12" style="height:0px;" class="spacing">&nbsp;</div>
-  		<div class="col-sm-12">
-  			<h1 style="text-align: -webkit-center; font-size: 80px;margin: 20px auto 100px auto;">COORDINATOR</h1>
+  		<div class="col-sm-12" style="padding:0">
+  			<h1 style="text-align: -webkit-center; font-size: 35px;">COORDINATOR</h1>
   		</div>
   		
   		<div class="col-sm-12">
-  			<ul style="list-style: none;font-size: 50px;" id="home_list">
+  			<ul style="list-style: none;font-size: 25px;" id="home_list">
 				<li class="col-sm-12" style="text-align: -webkit-center;">
 					<div class="col-sm-1">&nbsp;</div>
-					<button class="btn-primary col-sm-10"><a href="/sendLocation">Send Location</a></button>
+					<a href="/sendLocation">
+						<button class="btn-primary col-sm-10" id="btn1">SEND LOCATION</button>
+					</a>
 					<div class="col-sm-1">&nbsp;</div>
 				</li>
 				<li class="col-sm-12" style="text-align: -webkit-center;">
 					<div class="col-sm-1">&nbsp;</div>
-					<button class="btn-success col-sm-10"><a href="/receiveLocation">Receive Location</a></button>
+					<a href="/receiveLocation">
+						<button class="btn-success col-sm-10">RECEIVE LOCATION</button>
+					</a>
 					<div class="col-sm-1">&nbsp;</div>
 				</li>
 			</ul>
   		</div>	
 	</div>
-  	 	
+  	
   </body>
 </html>

@@ -41,12 +41,8 @@
 
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 14px "lineto", Helvetica, Arial, sans-serif;
   font-family: 'lineto'
-}
-
-a {
-  color: #fff;
 }
 
 
@@ -56,13 +52,21 @@ a {
 
 #home_list li{
 	margin-top: 50px;
-	margin-bottom: 100px;
+	margin-bottom: 50px;
 }
 
 #home_list li button{
 	padding: 30px;
 	border-radius: 25px;
 	border: none;
+}
+#home_list li button:focus {
+    outline:none;
+}
+
+#home_list li button a{
+	-webkit-font-smoothing: antialiased;
+	color: #fff;
 }
 
     

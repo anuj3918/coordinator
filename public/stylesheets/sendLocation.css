@@ -1,0 +1,77 @@
+@font-face {
+    font-family: 'lineto'; /*a name to be used later*/
+    src: url("../lineto/lineto.ttf"); /*URL to font*/
+    src: url("../lineto/lineto.woff");
+}
+
+@media screen and (max-width: 600px) {
+    .spacing1{
+        height:80px;
+    }
+
+    .spacing2{
+        height:150px;
+    }
+    /*
+    .spacing3{
+        height:100px;
+        background-color: red;
+    }
+    #thought{
+    	text-align: -webkit-center;
+    }
+    .footers{
+    	display: none;
+    }
+    .main_logo{
+    	text-align: -webkit-center;
+    }
+    .logo_text{
+    	text-align: -webkit-center;
+    }
+    #know_more{
+    	width: 60%;
+    }
+    .feautres_web{
+    	display: none;
+    }
+    */
+
+    body {
+		padding: 20px;
+		font: 20px 'lineto', Helvetica, Arial, sans-serif;
+		font-family: 'lineto'
+	}
+
+	#sendingDiv{
+		display: none;
+	}
+
+	#stoppingDiv{
+		display: none;
+	}
+
+	#displayLocation{
+		display: none;
+	}
+    
+}
+
+
+.locationButtons{
+	padding: 30px;
+    border: none;
+    border-radius: 20px;
+}
+
+.locationButtons:focus{
+	outline: 0;
+}
+
+
+#myName:focus {border-radius:20px;}
+
+button:focus {border-radius:15px;}
+
+
+

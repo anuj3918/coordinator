@@ -1,59 +1,141 @@
 <!DOCTYPE html>
 <html>
-<head><title>Send Location</title></head>
-<script src="javascripts/jquery.min.js"></script>
-<script src="javascripts/socket.io.js"></script>
+  <head>
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<title>Coordinator-Send</title>
+  	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
+  	<link rel="stylesheet" type="text/css" href="stylesheets/sendLocation.css">
 
-<body>
-	<h1>Send Location</h1>
-	<a href="/">Home</a>
-	<a href="/sendLocation">Send Location</a>
-	<a href="/receiveLocation">Receive Location</a>
+  	<script src="javascripts/jquery.min.js"></script>
+  	<script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+	<script src="javascripts/socket.io.js"></script>
+  </head>
+  
+  <body>
 
-<br/><br/>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">COORDINATE</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li class="active"><a href="/sendLocation">Send Location</a></li>
+        <li><a href="/receiveLocation">Receive Location</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
-<label>Enter you name</label>
-<input type="text" id="myName"><br/><br/><br/>
-<button onclick="setMyname()">Set My Name</button>
+<div class="col-sm-12" class="spacing1">&nbsp;</div>
 
-<label>Enter the name of recipient</label>
-<input type="text" id="shareWith"><br/><br/><br/>
-<button onclick="setRecipientname()">Set receiver's name</button>
+<div class="col-sm-12 setDetails" style="text-align: -webkit-center;">
+	<div class="col-sm-4" style="margin-bottom: 30px;">
+		<label>Your name</label>
+		<input type="text" id="myName" placeholder="sender" style="text-align:center;border: 1px solid #908484;border-radius:20px;">
+	</div>
+	<div class="col-sm-4" style="margin-bottom: 40px;">
+		<label>Receiver's name</label>
+		<input type="text" id="shareWith" placeholder="receiver" style="text-align:center;border: 1px solid #908484;border-radius:20px;">
+	</div>
+	<div class="col-sm-4">
+			<button class="btn-success" onclick="setInfo()" style="padding: 10px 50px;border-radius: 15px;border: none;">Set Details</button>	
+	</div>
+</div>
 
-<button onclick="sendLocation()">Start sending Location</button>
-<button onclick="stopSendingLocation()">Stop sending Location</button>
+<div class="col-sm-12 changeDetails" style="text-align: -webkit-center; display:none">
+	<div class="col-sm-4" style="text-align: right;">
+		<label style="float:left">Sender: </label><p id="yourName"></p>
+	</div>
+	<div class="col-sm-4" style="text-align: right;">
+		<label style="float:left">Receiver: </label><p id="receiverName"></p>
+	</div>
+	<div class="col-sm-4">
+		<button class="btn-success infoChange" style="padding: 10px 50px;border-radius: 15px;border: none;">Edit Details</button>	
+	</div>
+</div>	 
+
+<div class="col-sm-12" class="spacing2" style="height:100px;">&nbsp;</div>
+<div class="col-sm-12" class="spacing3" style="height:40px; display:none;">&nbsp;</div>
+
+<div id="displayLocation" class="col-sm-12" style="text-align: -webkit-center; display:none">
+	<h3>Location retreived</h3>
+	<div class="col-sm-6" style="text-align: right;">
+		<label style="float:left">Latitude  : </label><p id="latitude"></p>
+	</div>
+	<div class="col-sm-6" style="text-align: right;">
+		<label style="float:left">Longitude : </label><p id="longitude"></p>
+	</div>
+</div>
+	
+<div class="col-sm-12" id="sendingDiv" style="display: none;text-align: -webkit-center;">
+	<button class="btn-primary locationButtons" onclick="sendLocation()">Start sending Location</button>
+</div>
+
+<div class="col-sm-12" class="spacing3" style="height:40px; display:none;">&nbsp;</div>
+<div class="col-sm-12" id="stoppingDiv" style="display: none;text-align: -webkit-center;">
+	<button class="btn-danger locationButtons" onclick="stopSendingLocation()">Stop sending Location</button>
+</div>
 
 
-<br/><br/><br/>
-<label>Location retrieved as : </label>
-<p id="demo"></p>
-
+  	 	
 <script>
+
+$('.infoChange').on('click', function(){
+	$('.changeDetails').css("display", "none");
+	$('#sendingDiv').css("display", "none");
+	$('.setDetails').css("display", "inherit");
+});
+
 var socket = io();
 
 var interval = null;
 var myName = null;
 var recipient = null;
 
-function setMyname(){
+function setInfo(){
 	myName = $('#myName').val();
-	socket.emit('addClient', myName);
-}
-
-function setRecipientname(){
 	recipient = $('#shareWith').val();
-	socket.emit('addClient', myName);
+	if(myName.length === 0 || recipient.length === 0){
+		alert("Names can't be blank");
+	}
+	else{
+		$('.setDetails').css("display", "none");
+		$('#yourName').html(myName);
+		$('#receiverName').html(recipient);
+		$('.changeDetails').css("display", "inherit");
+		$('#sendingDiv').css("display", "inherit");
+		socket.emit('addClient', myName);
+		console.log("Names set");
+	}
 }
 
 function sendLocation(){
 	console.log('setting interval')
+	getLocation();
 	interval = setInterval(getLocation, 30*1000);
 }
 
 function getLocation() {
+	
 	console.log("Getting location");
 	var x = document.getElementById("demo");
     if (navigator.geolocation) {
+    	$('#sendingDiv').css("display", "none");
+    	$('.spacing2').css("display", "none");
+    	$('.spacing3').css("display", "inherit");
+		$('#stoppingDiv').css("display", "inherit");
+		$('#displayLocation').css("display", "inherit");
         navigator.geolocation.getCurrentPosition(showPosition);
     } else { 
         x.innerHTML = "Geolocation is not supported by this browser.";
@@ -62,25 +144,33 @@ function getLocation() {
 
 function showPosition(position) {
 	console.log("Location Received");
-    document.getElementById("demo").innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude;
+	latitude = parseFloat(position.coords.latitude.toFixed(3));
+	longitude = parseFloat(position.coords.longitude.toFixed(3));
+    $('#latitude').html(latitude);
+    $('#longitude').html(longitude);
     var details = {
     	location: {
     		lat: position.coords.latitude,
     		lng: position.coords.longitude
     	},
-    	to: recipient
+    	to: recipient,
+    	from: myName
     }
     console.log("Sending location to "+recipient);
     socket.emit('senderLocation', details);
 }
 
 function stopSendingLocation(){
+	$('.spacing3').css("display", "none");
+	$('.spacing2').css("display", "inherit");
+	$('#stoppingDiv').css("display", "none");
+	$('#displayLocation').css("display", "none");
+	$('.changeDetails').css("display", "inherit");
+	$('#sendingDiv').css("display", "inherit");
 	console.log("Ending interval")
 	clearInterval(interval);
 }
 </script>
-
 
 </body>
 </html>

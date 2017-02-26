@@ -30,8 +30,9 @@ io.on('connection', function(socket){
   	console.log(clients);
   })
 
+
   socket.on('senderLocation', function(details){
-  	io.to(clients[details.to]).emit('locationToReciever', details.location);
+  	io.to(clients[details.to]).emit('locationToReciever', details);
   })
 
   //Whenever someone disconnects this piece of code executed
