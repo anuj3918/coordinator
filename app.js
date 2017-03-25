@@ -9,13 +9,13 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var socket = require('socket.io-client')('http://localhost');
-  socket.on('connect', function(){
-    console.log('socket io connected server side');
-  });
-  socket.on('event', function(data){
-    console.log("Socket io server side");
-  });
-  socket.on('disconnect', function(){});
+socket.on('connect', function(){
+  console.log('socket io connected server side');
+});
+socket.on('event', function(data){
+  console.log("Socket io server side");
+});
+socket.on('disconnect', function(){});
 
 var app = express();
 

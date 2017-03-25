@@ -170,6 +170,12 @@ function stopSendingLocation(){
 	console.log("Ending interval")
 	clearInterval(interval);
 }
+
+socket.on('stopSending', function(){
+	console.log('Stopping location sender side');
+	stopSendingLocation();
+});
+
 </script>
 
 </body>

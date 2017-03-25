@@ -30,6 +30,17 @@ io.on('connection', function(socket){
   	console.log(clients);
   })
 
+  socket.on('stopReceivingLocation', function(name){
+  	console.log("Stopping from server side");
+  	if(clients[name]){
+  		io.to(clients[name]).emit('stopSending');
+  		console.log('Emitted stop event to sender');
+  	}
+  	
+  	console.log("Clients object is :");
+  	console.log(clients);
+  })
+
 
   socket.on('senderLocation', function(details){
   	io.to(clients[details.to]).emit('locationToReciever', details);

@@ -47,26 +47,33 @@
 <div class="col-sm-12" class="spacing1">&nbsp;</div>
 
 <div class="col-sm-12 setDetails" style="text-align: -webkit-center;">
-	<div class="col-sm-6" style="margin-bottom: 30px;">
+	<div class="col-sm-4" style="margin-bottom: 30px;">
 		<label>Your name</label>
 		<input type="text" id="myName" placeholder="myname" style="text-align:center;border: 1px solid #908484;border-radius:20px;">
 	</div>
-	<div class="col-sm-6">
-			<button class="btn-success" onclick="setMyname()" style="padding: 10px 50px;border-radius: 15px;border: none;">Set Details</button>	
+	<div class="col-sm-4" style="margin-bottom: 30px;">
+		<label>Sender's name</label>
+		<input type="text" id="senderName" placeholder="sender" style="text-align:center;border: 1px solid #908484;border-radius:20px;">
+	</div>
+	<div class="col-sm-4">
+			<button class="btn-success" onclick="setInfo()" style="padding: 10px 50px;border-radius: 15px;border: none;">Set Details</button>	
 	</div>
 </div>
 
 <div class="col-sm-12 changeDetails" style="text-align: -webkit-center; display:none">
-	<div class="col-sm-6" style="text-align: right;">
+	<div class="col-sm-4" style="text-align: right;">
 		<label style="float:left">My name : </label><p id="yourName"></p>
 	</div>
-	<div class="col-sm-6">
+	<div class="col-sm-4" style="text-align: right;">
+		<label style="float:left">Receiving from : </label><p class="sender"></p>
+	</div>
+	<div class="col-sm-4">
 		<button class="btn-success infoChange" style="padding: 10px 50px;border-radius: 15px;border: none;">Edit Details</button>	
 	</div>
 </div>	
 
 <div id="displayLocation" class="col-sm-12" style="text-align: -webkit-center; display:none">
-	<h3>Location retreived from : </h3> <p id="sender"></p>
+	<h3>Location retreived from : </h3> <p class="sender"></p>
 	<div class="col-sm-6" style="text-align: right;">
 		<label style="float:left">Latitude  : </label><p id="latitude"></p>
 	</div>
@@ -84,14 +91,15 @@
 	<button class="btn-primary locationButtons" onclick="startReceivingLocation()">Start receiving Location</button>
 </div>
 
-<!-- <div class="col-sm-12" id="stopDiv" style="display: none;text-align: -webkit-center;">
-	<button class="btn-danger locationButtons" onclick="#stopReceivingLocation()">Stop receiving Location</button>
-</div> -->
+<div class="col-sm-12" id="stopDiv" style="display: none;text-align: -webkit-center;">
+	<button class="btn-danger locationButtons" onclick="stopReceivingLocation()">Stop receiving Location</button>
+</div>
 
 <script type="text/javascript">
 var latitude = 19.0760
 var longitude = 72.8777
 var myName = null;
+var sender = null;
 var uluru, map, marker, myLatlng;
 function initMap() {
 	uluru = {lat: latitude, lng: longitude};
@@ -116,9 +124,11 @@ function initMap() {
 
 var socket = io();
 
-function setMyname(){
+function setInfo(){
 	myName = $('#myName').val();
+	sender = $('#senderName').val();
 	$('#yourName').html(myName);
+	$('.sender').html(sender);
 	$('.setDetails').css("display", "none");	
 	$('#startDiv').css("display", "inherit");
 	$('.changeDetails').css("display", "inherit");
@@ -126,11 +136,16 @@ function setMyname(){
 
 function startReceivingLocation(){
 	socket.emit('addClient', myName);
+	$('#startDiv').css("display", "none");
+	$('#stopDiv').css("display", "inherit");
 }
 
-// function stopReceivingLocation(){
-// 	socket.emit('removeClient', myName);
-// }
+function stopReceivingLocation(){
+	console.log("Emitting stop function");
+	socket.emit('stopReceivingLocation', sender);
+	$('#startDiv').css("display", "inherit");
+	$('#stopDiv').css("display", "none");
+}
 
 
 $('.infoChange').on('click', function(){
@@ -145,7 +160,7 @@ socket.on('locationToReciever', function(details){
 	var locationReceived = details.location; 
 	$('#latitude').html(locationReceived.lat);
 	$('#longitude').html(locationReceived.lng);
-	$('#sender').html(details.from);
+	$('.sender').html(details.from);
 
 	latitude = parseFloat(locationReceived.lat);
 	longitude = parseFloat(locationReceived.lng);
