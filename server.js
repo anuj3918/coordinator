@@ -4,56 +4,62 @@ var path = require('path');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var clients = {}
-
-app.get('/', function(req, res){
-  res.sendfile('index.html');
-});
-
-app.get('/sendLocation', function(req, res){
-  res.sendfile('sendLocation.html');
-});
-
-app.get('/receiveLocation', function(req, res){
-  res.sendfile('receiveLocation.html');
-});
+var clients = {};
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-//Whenever someone connects this gets executed
+//Routes for basic html rendering
+app.get('/', function(req, res){
+  res.sendFile(__dirname + '/views/index.html');
+});
+
+app.get('/sendLocation', function(req, res){
+  res.sendFile(__dirname + '/views/sendLocation.html');
+});
+
+app.get('/receiveLocation', function(req, res){
+  res.sendFile(__dirname + '/views/receiveLocation.html');
+});
+
+
+//Whenever a new client connects
 io.on('connection', function(socket){
-  console.log('A new user connected with id : '+ socket.id);
-  
+
+  //add this client's socket id to clients object
   socket.on('addClient', function(name){
-  	clients[name] = socket.id;
-  	console.log("Clients object is :");
-  	console.log(clients);
-  })
+    for( var key in clients){
+      if(clients[key] === socket.id){
+        delete clients[key];
+      }
+    }
+    if(!clients.hasOwnProperty(name)){
+      clients[name] = socket.id;
+      console.log("New client set");
+      console.log(clients);
+    }
+  });
+
+  //Remove the client's socket id on disconnection
+  socket.on('disconnect', function () {
+    for( var key in clients){
+      if(clients[key] === socket.id){
+        delete clients[key];
+        console.log("One client removed");
+        console.log(clients);
+      }
+    } 
+  });
 
   socket.on('stopReceivingLocation', function(name){
-  	console.log("Stopping from server side");
   	if(clients[name]){
   		io.to(clients[name]).emit('stopSending');
-  		console.log('Emitted stop event to sender');
   	}
-  	
-  	console.log("Clients object is :");
-  	console.log(clients);
-  })
-
+  });
 
   socket.on('senderLocation', function(details){
   	io.to(clients[details.to]).emit('locationToReciever', details);
-  })
-
-  //Whenever someone disconnects this piece of code executed
-  socket.on('disconnect', function () {
-    console.log('A user disconnected');
-    delete clients[socket.id];
   });
 
 });
 
-http.listen(3000, function(){
-  console.log('listening on amazon ip:3000');
-});
+http.listen(3000);

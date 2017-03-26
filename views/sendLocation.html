@@ -21,7 +21,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>                        
       </button>
-      <a class="navbar-brand" href="#">COORDINATE</a>
+      <a class="navbar-brand" href="/">COORDINATE</a>
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
@@ -41,11 +41,11 @@
 
 <div class="col-sm-12 setDetails" style="text-align: -webkit-center;">
 	<div class="col-sm-4" style="margin-bottom: 30px;">
-		<label>Your name</label>
+		<label>My name : </label>
 		<input type="text" id="myName" placeholder="sender" style="text-align:center;border: 1px solid #908484;border-radius:20px;">
 	</div>
 	<div class="col-sm-4" style="margin-bottom: 40px;">
-		<label>Receiver's name</label>
+		<label>Send location to : </label>
 		<input type="text" id="shareWith" placeholder="receiver" style="text-align:center;border: 1px solid #908484;border-radius:20px;">
 	</div>
 	<div class="col-sm-4">
@@ -55,10 +55,10 @@
 
 <div class="col-sm-12 changeDetails" style="text-align: -webkit-center; display:none">
 	<div class="col-sm-4" style="text-align: right;">
-		<label style="float:left">Sender: </label><p id="yourName"></p>
+		<label style="float:left">My name : </label><p id="yourName"></p>
 	</div>
 	<div class="col-sm-4" style="text-align: right;">
-		<label style="float:left">Receiver: </label><p id="receiverName"></p>
+		<label style="float:left">Sending location to : </label><p id="receiverName"></p>
 	</div>
 	<div class="col-sm-4">
 		<button class="btn-success infoChange" style="padding: 10px 50px;border-radius: 15px;border: none;">Edit Details</button>	
@@ -95,6 +95,13 @@ $('.infoChange').on('click', function(){
 	$('.changeDetails').css("display", "none");
 	$('#sendingDiv').css("display", "none");
 	$('.setDetails').css("display", "inherit");
+	if(interval){
+		$('#stoppingDiv').css("display", "none");
+		$('#displayLocation').css("display", "none");
+		clearInterval(interval);
+		interval = null;
+	}
+	
 });
 
 var socket = io();
@@ -104,8 +111,8 @@ var myName = null;
 var recipient = null;
 
 function setInfo(){
-	myName = $('#myName').val();
-	recipient = $('#shareWith').val();
+	myName = $('#myName').val().toLowerCase();
+	recipient = $('#shareWith').val().toLowerCase();
 	if(myName.length === 0 || recipient.length === 0){
 		alert("Names can't be blank");
 	}
@@ -121,14 +128,12 @@ function setInfo(){
 }
 
 function sendLocation(){
-	console.log('setting interval')
 	getLocation();
 	interval = setInterval(getLocation, 30*1000);
 }
 
 function getLocation() {
 	
-	console.log("Getting location");
 	var x = document.getElementById("demo");
     if (navigator.geolocation) {
     	$('#sendingDiv').css("display", "none");
@@ -143,7 +148,6 @@ function getLocation() {
 }
 
 function showPosition(position) {
-	console.log("Location Received");
 	latitude = parseFloat(position.coords.latitude.toFixed(3));
 	longitude = parseFloat(position.coords.longitude.toFixed(3));
     $('#latitude').html(latitude);
@@ -155,8 +159,7 @@ function showPosition(position) {
     	},
     	to: recipient,
     	from: myName
-    }
-    console.log("Sending location to "+recipient);
+    };
     socket.emit('senderLocation', details);
 }
 
@@ -165,14 +168,15 @@ function stopSendingLocation(){
 	$('.spacing2').css("display", "inherit");
 	$('#stoppingDiv').css("display", "none");
 	$('#displayLocation').css("display", "none");
-	$('.changeDetails').css("display", "inherit");
+	if($('.changeDetails').css("display") === "none"){
+		$('.changeDetails').css("display", "inherit");
+	}
 	$('#sendingDiv').css("display", "inherit");
-	console.log("Ending interval")
 	clearInterval(interval);
+	interval = null;
 }
 
 socket.on('stopSending', function(){
-	console.log('Stopping location sender side');
 	stopSendingLocation();
 });
 
